@@ -1,7 +1,7 @@
 <%@page import="com.itheima.constant.CProductConstant"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html>
 
@@ -105,7 +105,8 @@
 						<p>
 							<a
 								href="${pageContext.request.contextPath }/product?method=getById&pid=${p.pid}"
-								style='color: #666'>${fn:substring( p.pname,0,10) }...</a>
+								style='color: #666'>
+								<%-- ${fn:substring( p.pname,0,10) } --%>...</a>
 						</p>
 						<p>
 							<font color="#E4393C" style="font-size: 16px">&yen;${p.shop_price }</font>
@@ -161,7 +162,8 @@
 						<p>
 							<a
 								href="${pageContext.request.contextPath }/product?method=getById&pid=${p.pid}"
-								style='color: #666'>${fn:substring( p.pname,0,10) }...</a>
+								style='color: #666'> <%-- ${fn:substring( p.pname,0,10) } --%>...
+							</a>
 						</p>
 						<p>
 							<font color="#E4393C" style="font-size: 16px">&yen;${p.shop_price }</font>
