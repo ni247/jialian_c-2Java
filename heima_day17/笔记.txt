@@ -1,0 +1,212 @@
+listener
+	监听器,监听javaweb中的三个域对象
+		httpsession serlvetrequest servletcontext
+	监听对象的创建和销毁
+		servletcontextListener
+			常用语-在项目启动的时候加载配置文件
+		servletRequestListener
+		httpsessionListener
+	监听对象的属性的变化
+		servletContextAttributeListener
+		servletRequestAttributeListener
+		httpsessionAttriteListener
+	监听javabean在session中状态
+		注意:在javabean自动感知在session中的状态,不需要再配置文件配置
+		httpsessionactivationlistener(钝化和活化)
+			可以在项目中meta-inf文件夹下,添加context.xml文件.写信息就可以
+		httpsessionbindinglistener(解绑和绑定,添加或移除)
+	编写步骤:
+		1.编写监听器
+		2.编写配置文件
+			<listener>
+				<listener-class>
+				</listener-class>
+			</listener>
+			
+filter 过滤器
+	过滤器,过滤请求和响应
+	filter编写步骤:
+		1.编写一个类
+			必须实现filter接口
+			必须重写方法
+		2.编写配置文件
+			注册filter
+			绑定路径
+	filter生命周期方法:
+		doFilter(req,res,chain);
+			使用步骤:
+				1.强转
+				2.编写自己的业务
+				3.放行
+	url-pattern的配置
+		完全匹配
+		目录匹配
+		后缀名匹配
+	多个filter匹配到的时候,执行时机是根据web.xml中filter-mapping中的顺序决定
+	
+	filter-mapping中两个子标签
+		servlet-name:过滤指定的servlet
+		dispatcher:过滤哪种方式过来的请求
+			REQUEST:只过滤从浏览器发送过来的请求,默认
+			
+案例1-模拟junit测试
+需求:
+	在一个类的方法中添加@Mytest,在另一个类的main方法中,就可以执行带有@MyTest方法
+技术分析:
+	注解
+	反射
+
+注解:
+	jdk5之后提供了一个特性,和类接口同级
+	格式:
+		@interface 注解名{}
+	作用:
+		编译检查
+		替代配置文件
+		定义注解(元注解:注解上的注解)
+		分析代码(用到反射)
+
+	java中的3个注解
+		@Override:声明该方法是从父类上继承过来的,执行的是编译器的检查
+		@SuppressWarnings:抑制警告. @SuppessWarning(all) 全部
+		@Deprecated:弃用了,不赞成使用
+		
+	自定义注解:
+		注解属性:
+			注解本质上是一个接口.接口中可以有常量和公共抽象方法.
+			抽象方法在注解中就称之为注解属性.
+		注解属性类型:
+			基本类型:int byte char long
+			String
+			Class
+			Annotation
+			Enum:枚举
+			以上类型对应的一维数组
+		注意:
+			一旦注解有属性了,使用注解的时候必须赋值.除非这个注解属性有默认值
+		赋值的格式
+			@注解名(属性名=属性值)
+			若注解类型为数组,且至于一个值的时候,可以有两种写法
+				方式1:
+					属性名={值,值}
+				方式2:
+					属性名=值
+				方式3:
+					值 注意:这种情况只有在只有一个属性的情况下使用
+			若属性名为value的时候,且只需要为这个value属性赋值的时候,value可以省略
+			
+		元注解:
+			定义在注解上的注解
+				@Retention 	规定注解保留到什么阶段
+					SOURCE:只在代码中保留,在字节码文件中就删除了
+					CLASS:在代码和字节码文件中保留
+					RUNTIME:所有阶段都保留
+				
+				@Target	规定注解作用在什么上面,值为枚举ElementType的值
+					TYPE:作用在类,接口等上面 
+					METHOD:作用在方法上面
+					FIELD:作用字段上面
+					
+案例2-完成文件上传
+技术分析:
+	文件上传
+		servlet3.0
+		commons-fileupload
+		框架
+		
+servlet3.0
+	3.0支持注解开发,没有web.xml这个文件.
+	内嵌了文件上传功能
+	例如:
+		创建servlet
+			在类上面添加 @WebServlet(urlPatterns = { "/demo2", "/demo21" }, loadOnStartup = 2)
+		创建listener
+			在类上面添加 @WebListener()
+		创建filter
+			在类上面添加 @WebFilter({/demo2", "/demo21" })
+			
+文件上传
+	浏览器端的要求:
+		表单的提交方式必须是post.因为get参数是有限制的.
+		表单中必须有一个文件上传组件 <input type="file" name="">
+		必须设置表单的enctype=multipart/form-data
+	服务器端的要求:
+		servlet3.0中
+			需要在servlet中添加注解
+				@MultipartConfig
+			接口普通上传组件(除了文件上传组件):request.getParamter("名字")
+			接受文件上传组件:request.getPart("名字")
+				part.getName():获取提交上来表单的name的值
+			获取文件名:
+				part.getHeader("content-Disposition):获取头信息,然后截取
+					例如:String contentDis = part.getHeader("content-disposition");
+		String fileName = contentDis.substring(contentDis.indexOf("filename=") + 10, contentDis.length() - 1);
+
+上传注意的问题:
+	名字重复 解决方案:随机名称
+		在数据库中提供两个字段
+			一个字段用来保存原文件名称(真实名称),另一个字段用来存放文件存放路径
+		随机名称:
+			uuid
+			时间戳
+	文件安全:
+		重要的文件可以存放在web-inf或者meta-inf或者服务器创建一个路径,项目外.
+		对于不是很重要的文件,可以直接放在项目下
+		
+	文件存放目录-分目录存放:
+		方式1:日期
+		方式2:用户
+		方式3:文件个数
+		方式4:随机目录
+			例如:从a-z
+			mkdirs方法
+			
+类加载器:
+	类加载:
+		编写的.java文件,jvml会将其生成.class文件.该文件加载进内存中,生成一个对象.class对象
+	类加载器层次结构:
+		引导类加载器			rt.jar(rt-runtime)
+		扩展类加载器			ext/*.jar
+		应用类加载器			我们自己编写类
+	全盘负责委托机制:
+		当一个类运行的时候,有可能有其他类..应用类加载器询问扩展类加载器
+		扩展类加载器问引导类加载器
+		然后引导类加载自己负责的,扩展类加载器加载自己负责的.应用类加载器再加载
+
+案例3-统一编码
+	技术分析:
+		动态代理
+		
+静态代理书写步骤:
+	1.要求被装饰者和装饰者实现同一个接口或者继承同一个类
+	2.在装饰者中要有被装饰者的引用
+	3.对需要增强的方法进行加强
+	4.对不需要加强的方法调用原来的方法
+	
+动态代理:
+	在项目运行时才创建一个代理对象,对方法进行增强(控制)
+	方式1:
+		jdk中proxy类,前提:必须实现接口
+	方式2:
+		spring中cglib,前提:继承类
+		
+	动态的在内存中创建一个代理对象
+		Object Proxy.newProxyInstance(ClassLoader loader,Class[] interfaces,InvocationHander h)
+			参数说明:
+				ClassLoader:代理对象的类加载器,一般使用的是被代理对象的类加载器
+					被代理对象.getClass().getLoader()
+				interfaces:代理对象需要实现的接口,一般使用的是被代理对象所实现的所有接口
+					被代理对象.getClass().getInterrfaces()
+				h:执行处理类,在这里面对方法进行加强,及抽象类或接口
+					new InvocationHandler() 匿名实现类
+				
+		invocationHandler中只有一个方法
+			Object invoke(Object proxy,Method method,Object[] args)
+				参数说明:
+					proxy:	代理对象
+					method:	当前执行的方法
+					args:	方法执行所需要的参数
+					返回值:就是当前method对象执行的结果.
+
+		
+	    

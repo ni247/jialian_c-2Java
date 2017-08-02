@@ -1,0 +1,335 @@
+jsp:
+cookie:
+	浏览器端会话技术
+	由服务器产生,生成key=value形式,通过响应头(set-cookie)返回给浏览器,保存在浏览器端
+	下次访问的时候根据一定的规则携带cookie,通过请求头(cookie)携带给服务器
+	常用方法:
+		构造:
+			new Cookie(String key,String value)
+		写回:
+			res.addCookie(Cookie c)
+		获取:
+			Cookie[] request.getCookies();
+		cookie的api:
+			getName():获取cookie的名称
+			getValue():获取cookie的值
+			setMaxAge(int 描述):持久化
+				若int为0,.删除此cookie(前提必须路径一直)
+			setPath(String path):设置cookie的路径
+				若访问的链接的路径中包含cookie的path,则携带
+	注意:
+		cookie不能跨浏览器
+		cookie不支持中文
+		
+Session:
+	服务器端的会话技术
+	浏览器访问服务器的时候,服务器会获取jsessionid,
+		若获取不到:
+			服务器创建一个session,保存用户数据,将该session 的jessionid通过响应返回给浏览器
+		若获取到:
+			服务器拿着这个jsessionid区session池中查找有无此session
+				若查找不到:
+					服务器创建一个session,保存用户数据,将该session的jesssionid通过响应传给浏览器
+				若查找到:
+					拿过来直接使用,将该session
+		常用方法:
+			获取一个session
+				req.getSession();
+			
+		session域对象:
+			xxxAttribute()
+				生命周期:
+					创建:java程序中第一次使用req.getSession方法的时候
+					销毁:
+						服务器非正常关闭
+						session超时
+							默认时间超时
+							手动设置时间
+						手动删除:
+							session.invalidate()
+							
+	java中学习的域对象:
+		servletContext:共享的数据
+		HttpServletRequest:一次请求的数据
+		HttpSession:私有的数据
+		
+jsp/el/jstl
+案例1-在页面中展示所有的商品信息,不要使用jsp的脚本
+技术分析:
+	jsp/el/jstl
+	
+jsp:
+	java的服务器页面
+	作用:
+		将内容的生成和信息的展示分离
+	运行在服务器端,本质上就是一个servlet,产生的java文件和class文件保留在tomcat的work目录或项目.meta目录下
+jsp脚本:
+	<%...%>java代码片段
+	<%=...%>输出表达式,相当于out.print(...)
+	<%!...%>声明类成员
+jsp的指令
+	作用:声明jsp页面的一些属性和动作
+	格式:
+		<%@指令名称 属性="值" 属性="值"%>
+	jsp指令的分类:
+		page:主要声明jsp页面的一些属性
+		include:静态包含
+		taglib:导入标签库
+	注意:
+		一个页面中可以出现多个指令
+		指令可以放在任意位置,一般都放在jsp页面的最上面
+		
+	page指令:
+		重要属性:3个
+			content Type:设置响应流的编码,及通知浏览器用什么编码打开,设置文件的mimetyoe
+			pageEncoding:设置页面的编码
+			import:导入所需要的包
+			contentType和pageEncoding联系:
+				若两者都出现,各自使用各自的编码
+				若只出现一个,两个都使用出现的编码
+				若两者都不出现,使用服务器默认的编码tomcat7使用的iso-8859-1
+		了解属性:
+			language:当前jsp页面里面可以嵌套的语言
+			buffer:设置jsp页面流的缓冲区大小
+			autoFlush:是否自动刷新
+			extends:声明当前jsp的页面继承于哪个类,必须继承的是httpservlet极其自雷
+			session:设置jsp页面中是否可以使用session内置对象 默认true
+			isElIgnored:是否忽略el表达式
+			errorPage:当前jsp页面出现异常的时候要跳转的jsp页面
+			isErrorPage:是否是错误页面
+	include指令:
+		静态包含,就是将其他页面或者servlet的内容包含进来,一起进行编译运行,生成一个java文件
+		格式:
+			<%@include file="相对路径或者内部路径"%
+		例如<%@include file="/jsp/include/i1.jsp"%>
+		路径:
+			相对路径:
+				./或者什么都不写 当前路径
+				上一级路径 ../
+			绝对路径:
+				带协议和主机的绝对路径
+				不带协议和主机的绝对路径
+					/项目名/资源
+			内部路径:
+				不带协议和主机的绝对路径去掉项目名
+					请求转发 静态包含 动态包含
+		taglib指令:导入标签库
+			格式:
+				<%@taglib prefix="前缀名" uri="名称空间" tagdir="" %>
+			若导入之后
+				<前缀名:标签 ...>
+			例如:
+				<c:if test="">输出内容</c:if>
+jsp的内置对象:☆(9大内置对象)
+	在jsp页面上可以直接使用的对象
+		内置对象			类型
+		out 			JspWriter
+		request			HttpServletRequest 
+		response		HttpResponse
+		session			HttpSession
+		exception		Throwable
+	
+		page			servlet(this)
+		config			servketConfig
+		application		ServletContext
+		pageContext		PageContext
+		
+jsp的域对象:
+		application		整个项目
+		session			一次会话
+		request			一次请求
+		pageContext		一个页面
+	pageContext作用:
+		1.域对象
+			xxxAttribute()
+		2.操作其他的域对象
+			方法:
+				xxxAtrribute(...,int scope);
+					scope取值:
+						APPLICATION_SCOPE
+						SESSION_SCOPE
+						REQUEST_SCOPE
+						SESSION_SCOPE
+						都是pagecontext对象的方法
+		3.获取其他的内置对象
+			getxxx()
+			注意:
+				getRequest():获取request内置对象
+		4.便捷查找
+			findAttribute(String key):
+				依次从pagecontext,request,session,application四个域中,查找相应的属性,若查找了
+				了返回值,且结束该次查找
+				如果查找不到,则返回null
+				
+jsp的动作标签
+	<jsp:forward>:请求转发,相当于java中request.getRequestDispatcher(..).forward(..);
+		<jsp:forward page="内部路径"></jsp:forward>
+	<jsp:include>:动态包含
+		就是将被包含页面或者servlet的运行结果包含到当前页面中
+	
+el:
+	jsp的内置表达式语言,从jsp2.0开始
+	用来替代<%=%> 输出表达式
+	作用:
+		1.获取域中的数据
+		2.执行运算
+		3.获取常见的web对象
+		4.调用java的方法
+	格式:
+		${el表达式}
+		
+获取域中数据:
+	获取简单数据:
+		%{pageScope|requestScope|sessionScope|applicationScope.属性名}
+		以后经常使用(便捷查找):
+			${属性名 }:依次从pageContext,request,session,application域中查找指定的属性.也就是调用了findattribute方法
+			查找到就返回.若查找不到,返回空
+	获取复杂数据
+		获取数组中的数据
+			${域中的名称[index]}
+		获取list中的数据
+			${域中的名称[index]}
+		获取map中的数据
+			${域中的名称.键名},需要注意建明不能是数字
+			如果键名是数字
+			${域中的名称["键名"]}
+		注意:
+			若属性名中出现了".+-"等特殊符号,需要使用scope获取
+				例如:
+					${requestScope["arr.age"]}
+	javabean导航
+		javabean:
+			java语言编写的一个可重用的组件,
+			狭义上来说就是我们编写的一个普通的类,例如以前编写的user,person
+			javabean规范:
+				1.必须是一个公共的具体的类 public class
+				2.提供私有的字段 private String id 
+				3.提供公共访问字段的方法 get|set|is方法
+					public String getId{...}
+					一旦有公共的方法之后,get|set|is之后的内容,将首字母小写,这东西称之为bean属性
+						id称之为bean属性
+				4.提供一个无参的构造器
+				5.一般实现序列化接口
+					serializable
+		格式:
+			${域中javabean名称.bean属性}
+			
+执行运算:
+	size运算 关系(>..) 逻辑(&& ||)
+	注意:
+		+:只能进行加法运算,字符串形式数字可以进行加法运算.
+		empty:判断一个容器的长度是否为0(array,collection,map)
+		还可以判断一个对象是否为空
+		格式:${empty 域中对象名称} 
+		如果集合,则判断集合size
+		如果对象,则判断是否为null
+
+el的内置对象(了解)
+	11个
+		pageScope
+		resultScope
+		sessionScope
+		applicationScope
+		
+		param
+		paramValues
+		
+		header
+		headerValues
+		
+		initParam
+		
+		cookie
+		
+		pageContext
+	注意:
+		除了pageContext其余对象获取的都是map集合
+	了解:和参数相关的el内置对象
+		param
+		paramValues demo5.jsp
+	
+	了解:和请求头有关的el内置对象
+		header
+		headerValues
+	了解:和全局初始化参数有关的el内置对象
+		initParam
+		
+	cookie内置对象:
+		${cookie} 获取map{key=value}
+			例如:创建cookie
+				Cookie c=new Cookie("username","tom")
+			通过${cookie}获取相当于
+				{username=new Cookie("username","tom")}
+			相当于map的key是cookie的键
+			map的value是当前cookie
+			
+		若想获取名称username的cookie的value值
+			${cookie.username.value}--javabean导航
+		注意:
+			java中cookie的api
+				getName():获取cookie的名称
+				getValue():获取cookie的value值
+			我们称name和value是cookie的bean属性
+			
+		使用cookie内置对象:
+			${cookie.cookie名称.value}
+		
+		例如:
+			获取jession的值
+			${cookie.JSESSIONID.value}
+			
+	pageContext:相当于jsp的pageContext内置对象
+		在jsp页面中获取项目名称
+		${pageContext.request.contextPath}
+		页面中就使用这种.
+		
+jsp注释:
+	html注释   	<!--...-->
+	java注释		//
+		只在java代码中存在
+	jsp注释		<%--..--%>
+		只在jsp页面中存在,翻译成java文件后就没有了
+		
+jstl:
+	jsp标准的标签库语言
+	apache公司的.
+	用来替代java脚本
+	使用步骤:
+		1.导入jar包(jstl.jar和standard.jar)
+		2.在页面上导入标签库
+			<%@taglib prefix="" uri=""%>
+	jstl的分类:
+		core:核心类库
+		fmt:格式化|国际化
+		xml:xml相关,过时
+		sql:sql相关,过时
+		函数库:很少使用
+	core:掌握
+	☆	c:if标签,判断
+			<c:if text="${el表达式}">满足的时候输出</c:if>
+	
+	☆	c:forEach 循环
+			格式:
+				<c:forEach begin="开始" end="结束" step="步长" var="变量名字" varStatus="循环状态变量">
+					${i }--${vs.count}--${vs.current}  <br>
+				</c:forEach>
+				
+				varStatus:用来记录循环的状态
+					常用的属性:
+						count=记录次数
+						current:当前遍历的内容
+			例如:
+				<c:forEach begin="1" end="20" step="2" var="i" varStatus="vs">
+					${i }--${vs.count}--${vs.current}  <br>
+				</c:forEach>
+		
+		
+		c:set 往域中设置值
+		c:choose c:when c:otherwise 分支
+		
+扩展:
+	函数库
+	
+
+
+			

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!-- http-equiv:响应头
+content:响应头的内容 -->
+<meta http-equiv="refresh" content="3;url=/day10/refresh2.html">
+<title>Insert title here</title>
+</head>
+<body>
+	xxxx成功了,
+	<span id='sid'>3</span>秒跳转到refresh2页面
+</body>
+<script type="text/javascript">
+	var m = 3;
+	onload = function() {
+		setInterval(function() {
+			var sid = document.getElementById("sid");
+			sid.innerHTML = --m;
+		}, 1000)
+	}
+</script>
+</html>

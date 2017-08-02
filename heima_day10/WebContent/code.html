@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<img id="iii" alt="验证码" src="/day10/code" title="看不清楚换一张" />
+	<script type="text/javascript">
+		var i = 0;
+		onload = function() {
+			var obj = document.getElementById("iii");
+			obj.onclick = function() {
+				//需要注意,每次连接都不一样,不然浏览器会使用缓存,而不会改变图片
+				obj.src = "/day10/code?i=" + new Date();
+			}
+		}
+	</script>
+</body>
+</html>

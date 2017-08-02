@@ -1,0 +1,252 @@
+jsp回顾
+	jsp的注释
+		html注释
+		java注释
+		jsp注释
+			<%-- --%>
+	
+	jsp的指令:
+		page:声明页面的一些属性
+			重要的属性:
+				inport
+				pageEncoding
+				contentType
+			了解属性:
+				isErrorPage:一旦值为true,在jsp页面中就可以使用exception内置对象
+		include:静态包含,(内容)
+		taglib:导入标签库(c)
+	
+	jsp的内置对象 9个
+	out
+	request
+	response
+	session
+	
+	exception
+	page
+	config
+	application
+	pageContext
+	jsp的域对象
+		pgeContext
+		request
+		session
+		application
+	jsp的动作标签
+		jsp:forward请求转发
+		jsp:include 动态包含(运行结果)
+
+el:
+	从jsp2.0开始,使用的内置的表达式语言
+	替代输出表达式 <%=%>
+	作用:
+		1.获取域中的数据
+			简单
+				${域.属性名称}
+				${属性名称}.如果找不到不到则返回空
+				注意:
+					若属性名字中有.等特殊符号
+					必须使用${域["属性名称"]
+			复杂
+				数组和list ${域中名称[index]}
+				map ${域中名称.键名}
+			javabean导航
+				javabean:
+					1.必须是公共类 public class
+					2.提供私有字段
+					3.提供公共的访问字段的方法 get|set|is
+						一旦提供了公共的方法,get|get后面的名称后面的首字母小写单词就称之为bean属性
+						getName() name就是一个bean属性
+					4.提供一个无参构造器
+					5.一般会实现序列化接口
+				${域中的属性名.bean属性}
+		2.执行运算
+			+ 只能进行加法运算
+			empty 判断容器长度是否为0,判断对象是否为空
+			三元运算符
+	el的内置对象:
+		cookie
+			${cookie.cookie名称.value}
+		pageContext
+			${pageContext.request.contextPath} 在jsp页面动态的获取项目路径 /day12
+			
+jstl:
+	jsp标准标签库
+	apache
+	使用步骤:
+		导入jar包,两个
+		页面上导入标签库 <%@taglib ...
+	core:核心包
+		c:if标签 判断.
+		c:forEach 遍历循环
+		
+分层和事务
+案例-使用mvc思想完成转账操作
+需求:
+	在一个页面上有汇款人,收款人,转账金额,一旦转账之后,汇款人金额减少,收款人金额增大
+	使用事务控制
+技术分析:
+	mvc思想
+	事务
+	
+mvc思想
+	servlet
+	   |
+	  jsp
+	   |
+	  jsp+javabean:
+	  		jsp的模式1:
+	  			jsp:接受请求,展示数据
+	  			javabean:和数据打交道
+	   |
+	   jsp+javabean+servlet
+	   		jsp的模式2:
+	   			jsp:展示数据
+	   			javabean:和数据打交道
+	   			servlet:接受请求,处理业务逻辑
+	   		就是mvc思想的体现
+mvc:
+	就是讲业务逻辑,代码,显示相分离的一种思想
+	M:model 模型,作用:主要是封装.封装对数据的访问
+	V:view 	视图,作用:主要用来展示数据,一般都是jsp担任
+	C:control 控制,作用:接受请求,找到相应的javabean完成业务逻辑
+	
+jsp设计模式1()了解:
+	javabean+jsp
+	javabean在model1使用:
+		<!-- 接受之 -->
+		<jsp:useBean id="u" class="com.itheima.domain.User"></jsp:useBean>
+		<jsp:setProperty property="username" name="u" />
+		<jsp:setProperty property="password" name="u" />
+		<!-- 打印值 -->
+		<jsp:getProperty property="username" name="u" />
+		
+反射:
+	1.获取class对象
+		方式1.
+			Class c=Class.forName("全限定名")
+		方式2:
+			Class c=类名.class;
+		方式3:
+			Class c=对象.getClass;
+	2.获取对应类的构造方法
+		Constructor con=C.getConstructor(Class...paramClass)
+	3.可以通过c创建一个对象,必须有无参构造器
+		c.newInstance();
+	4.获取字段
+		c.getField()
+	5.获取所有方法
+        Method m=c.getMethod("sleep");
+        	获取私有方法
+        		Method m=c.getDeclaredMethod("sleep");
+        		m.setAccessible(true);设置可访问性
+        	执行方法
+        	返回值类型,返回值=(返回值类型)	m.invoke(参数);
+     6.
+     	Method对象的invoke是有返回值的,返回值就是目标方法执行的返回值(需要强转)
+     	
+总结:
+	有了class对象后,无所不能
+	
+javabean在model2中使用
+	BeanUtils:可以看做封装数据一个工具类
+		使用步骤:
+			1.导入jar包
+			2.使用beanUtils.populate(Object bean,Map map);
+			
+分层:
+	javaee的三层架构
+	web
+		作用:
+			---jsp---
+			展示数据
+			----servlet----
+			接受请求
+			找到对应的service,调用方法.完成逻辑操作
+			信息生成或者页面跳转
+	service 业务层
+		作用:
+			完成业务操作
+			调用dao
+	dao	(data access object)数据访问对象
+		作用:
+			对数据库的curd操作
+
+事务:
+	就是一件完整的事情,包含多个操作单元,这些操作要么全部成功,要么全部失败
+	例如:转账
+		包含转出操作和转入操作.
+	mysql中的事务:
+		mysql中的事务是默认自动提交的,一条sql语句就是一个事务
+		开启手动事务的方式:
+			方式1:关闭自动事务(了解)
+				set autocommit=off;
+			方式2:手动开启一个事务
+				start transaction;--开启一个事务
+				commit;--事务提交
+				rollback;--事务回滚
+		扩展:
+			oracle中事务默认是手动的,必须手动提交才可以
+			
+	java中的事务:
+		Connection接口的api:
+			setAutoCommit(false);  --关闭自动提交,手动开启事务
+			commit(): 事务提交
+			rollback():事务回滚
+			
+		扩展:了解	Savepoint还原点
+			void rollback(SavePoint savepoint)
+			Savepoint setSavepoint():设置还原点
+
+ThreadLocal的方法:
+	构造方法:
+		new ThreadLocal()
+	常用方法:
+		set(Object value):将内容和当前线程绑定
+		Object get():获取和当前线程绑定的内容
+		remove():将当前线程和内容解绑
+	内部维护了map集合
+	
+DButils:
+	1.创建queryrunner
+	2.编写sql
+	3.执行sql
+QueryRunner:
+	构造:
+		new QueryRunner(DataSource ds):自动事务
+		new QueryRunner():手动事务
+	常用方法:
+		update(Connection conn,String sql,Object ...par)
+		
+事务总结:
+	事务的特性:☆
+		ACID:
+		A:原子性:事务里面的操作单元不可以切割,要么全部成功,要么全部失败
+		C:一致性:事务执行前后,业务状态和其他业务状态保持一致,加起来综合一致
+		I:隔离性:一个事务执行的时候,最好不要受到其他事务的影响
+		D:持久性:一旦事务提交或者回滚,状态持久化到数据库中
+	不考虑隔离性会出现的读问题☆
+		脏读:在一个事务中读取到另一个事务没有提交的数据
+		不可重复读:在一次事务中,两次查询的结果不一致.针对update
+		虚读(幻读):在一次事务中,两次查询的结构不一致.针对insert
+	通过设置数据库的隔离级别来避免上述问题
+		read uncommited 读未提交 上面3个问题都会出现
+		read commited 	读已提交	避免脏读的发生
+		repeatable read 可重复读	避免脏读和不可重读读
+		serializable	串行化	可以避免所有的问题-锁表的操作
+	设置格式:
+		set session transaction isolation level 权限(read uncommited read commited...)
+	四种隔离级别的效率
+		read uncommited>read commited>	repeatable read>serializable
+	四种隔离级别的安全性
+		serializable>repeatable read>read commited>read uncommited
+	注意:
+		mysql中默认级别:repeateable read
+		oracle中默认级别:read commited
+		开发中绝对不允许脏读的发生
+		
+	java中控制隔离级别:(了解)
+		Connection的api			
+			void setTransactionIsolation(int level)
+				level是常量
+		

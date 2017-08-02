@@ -1,0 +1,90 @@
+ajax
+	异步javascript和xml
+	ajax是一种用于创建快速动态网页的技术
+	通过在后台于服务器进行少量的数据交换,ajax可以使网页进行异步更新,这意味着可以在不重新加载整个网页的情况下,
+	对网页的某部分进行更新
+ajax-api详解
+	常用属性:
+		onreadystatechange:           //检测readyState状态发生改变的时候
+		readyState:ajax核心对象的状态
+			0:核心对象已创建
+			1:调用了open操作
+			2:调用了send方法
+			3:部分响应已经生成(无意义)
+			4:全部响应完成
+		status:状态码
+			if(xmlhttp.readyState==4&&xmlhttp.status==200){
+			真正完成
+			}
+		responseText:响应回来的文本
+	常用方法:
+		open("请求方式","请求路径",是否为异步[true]):设置请求的方式和路径
+		send(["参数"]):发送请求
+		setRequestHeader("content-type", "application/x-www-form-urlencoded");
+		后面一串为form表单的enctype属性,设置post请求时,必须放在send前
+		
+jquery中的ajax
+	四种:
+		了解:对象.load(url,params,function(数据){})
+		☆:$.get(url,params,function(数据){},type)
+			url:请求的路径
+			params:请求的参数,参数是key/value形式 key=value {"":"","":""}
+			function:回调函数,参数就是服务器发送回来的数据
+			type:返回内容的格式,xml,html,script,json,text,_default.一般用json
+		☆:$.post(url,params,function(数据){},type)
+		
+		若结果为json格式,打印返回的时候是一个对象.通过.属性调取属性
+		例如json为{\"result\":\"success\",\"msg\":\"成功\"}--去掉\
+		获取msg只需要参数.msg
+		理解:
+			$.ajax([选项])
+				选项的可选值:
+					url:		请求路径
+					type:		请求方法
+					data:		发送到服务器的数据
+					success:fn 	成功以后的回调
+					error:fn 	异常之后的回调
+					datatype:	服务器发回来的数据格式
+					async:		设置是否为异常模式
+
+JSON
+	json(javascript object notaion)是一种轻量级的数据交换格式.基于ECMAscript的一个子集
+	json格式:
+		格式1:value可以为任意值
+			{"key":"value","key1":"value1"}
+		格式2:e可以为任意值
+			[e1,e2]
+	jsonlib工具类,可以使对象转换为json数据	
+		1.导入jar包
+		2.使用api
+			JSONArray.fromObject(对象) 数组和list
+			JSONObject.fromObject(对象) bean和map
+			
+选择器:
+	#id .class 标签名 [属性] [属性='值']
+	a b:后代 	a>b:孩子 	a+b:大弟弟	a~b:所有弟弟
+	:first :last :odd :even :eq|gt|lt(index)
+	 :hidden 隐藏 display:none type=hidden
+	 :checked :selected
+属性和css:
+	prop|attr
+文本 标签体
+	val()
+	html()
+	text()
+文档处理
+	内部插入
+		append 后面 prepend 前面
+	外部插入
+		after before
+	删除
+		remove 
+效果:
+	隐藏|显示
+		show() hide()
+	淡入淡出
+		fadeIn() fadeOut()
+	滑入滑出
+		slideDown() slideUp()
+遍历	
+	jquery对象.each(function(){})

@@ -1,0 +1,170 @@
+servlet总结:
+	体系结构:
+		Servlet:接口
+			|
+		GenericServlet:抽象类
+			|
+		HttpServlet:抽象类
+			|
+		自定义servlet
+		
+		servlet常用方法:
+			void init(ServletConfig config):初始化
+			void service(ServletRequest request,ServletResponse res):服务器 处理业务逻辑
+			voud destory():销毁
+			
+			ServletConfig getServletConfig():获取当前servlet的配置对象
+			
+		GenericServlet常用方法:
+			除了service方法没有实现,其他都实现了
+			空参的Init() 若我们自己想对servlet进行初始化操作,重写这个init()方法
+				
+		HttpServlet常用方法:
+			service做了实现,把参数强转,调用了重载的service方法
+				重载的service方法获取请求的方式,根据请求方式的不通调用响应的doxxx方法
+			doGet方法
+			doPost方法
+	
+servlet声明周期(面试必备)
+	/**
+	 * 初始化方法
+	 * 执行者:服务器
+	 * 执行次数:1次
+	 * 执行时机:默认第一次访问的时候
+	 */
+	void init(ServletConfig config):初始化
+		/**
+	 * 服务方法
+	 * 执行者:服务器
+	 * 执行次数:请求一次,执行一次
+	 * 执行时机:请求过来的时候执行
+	 */
+	void service(ServletRequest request,ServletResponse res):服务器 处理业务逻辑
+	/**
+	 * 销毁方法
+	 * 执行者:服务器
+	 * 执行次数:只执行一次
+	 * 执行时机:当servlet被移除或者服务器正常关闭的时候
+	 */
+	voud destory():销毁
+	
+	serlvet是一个单实例多线程
+	当请求默认第一次访问的时候,服务器创建servlet,调用init实现初始化操作,并调用一次service方法
+	每当请求过来的时候,服务器都会创建一个线程,调用service方法执行自己的业务逻辑
+	当我serlvet被移除的时候或服务器正常关闭的时候,服务器调用servlet的destory方法实现销毁方法
+	
+在servlet标签下有一个子标签 load-on-starup
+	作用:用来修改servlet的初始化时机
+	取值:正整数 值越大,优先级越低
+	
+当我们的配置文件里面没有指定配置的话,会查找tomcat的web.xml,若请求自己项目无定义,无处理,tomcat默认的
+servlet会帮我们处理信息
+
+路径的写法
+	相对路径 	 	./或者什么都不写
+	上一级路径 		../
+绝对路径:(我们使用)
+	带主机和协议的绝对路径(访问站外资源使用)
+		http://www.itheima.com/xxxxx
+		http://localhost:80/day09/hello
+	不带主机和协议的绝对路径
+		day09/hello(经常使用)
+		
+refresh定时刷新
+	常见的响应头-refresh
+		响应头格式:
+			refresh:描述;url=跳转的路径
+		设置响应头:
+			response.setHeader(String key,String value);
+			设置字符串形式的响应头
+			response.addHeader(String key,String value);
+			追加响应头,若之前设置过则追加,没设置过则设置
+		设置定时刷新:
+			response.setHeader("refresh","3;url=day0901/login.htm");
+
+ServletContext:
+	上下文(全局管理者)
+	常用的方法:
+		setAttrbute(String key,Object value);	//设置值
+		Object getAttribute(String key);		//获取值
+		removeAttribute(String key);			//移除值
+获取全局管理者:
+	getServletContext():
+		
+ServletConfig(了解):
+	servlet配置对象
+	作用:
+		1.获取当前servlet的名称
+		2.获取当前servlet的初始化参数
+		3.获取全局管理者
+	方法:
+		String getservletName():获取当前servlet的名称(web.xml配置的servlet-name)
+		String getInitParameter(String key):通过名称获取指定的参数值
+		Enumeration getInitParameterNames():获取所有的参数名称
+			初始化参数是放在web.xml文件
+				servlet标签下子标签init-param
+				
+		getServletContext():获取全局管理者
+	servletConfig是由服务器创建的,在创建servlet的同时也创建了他.通过servlet的init(ServletConfig config)将
+	config对象传递给servlet,由servlet的getServletConfig方法获取
+		
+ServletContext:
+	上下文(全局管理者)
+	一个项目的引用,代表了当前的项目
+	当项目启动的时候,服务器为每一个web项目创建一个servletcontext对象
+	当项目被移除的时候,或者服务器关闭的时候,这个对象销毁
+	作用:	
+		1.获取全局的初始化参数
+		2.共享资源
+		3.获取文件资源
+		4.其他操作
+	获取servletcontext:
+		方式1:getServletConfig().getServletContext();
+		方式2:getServletContext();
+	常用方法:
+		1.String getServletName():获取当前servlet的名称(web.xml配置的servlet-name)
+		2.String getInitParameter(String key):通过名称获取指定的参数值
+			在根标签下有一个context-param子标签,用来存放初始化参数
+				<context-param>
+					<param-name></param-name>
+					<param-value></param-value>
+				</context-param>
+		3.Enumeration<String> getInitParameterNames()：获取所有的参数名
+		4.xxxAttribute
+		4.String getRealPath(String path):获取文件部署到tomcat上的真实路径
+			getRealPath("/") 获取项目路径 D:\CloudStation\personal\heima28\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\day09\
+			getRealPath("/笔记.txt")  D:\CloudStation\personal\heima28\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\day09\笔记.txt
+		5.InputStream getResourceAsStream	以流的形式返回一個文件
+		6.获取文件的nime类型
+			String getMineType(String 文件名称)
+			
+ServletConfig：
+	获取方法：getgetServletConfig();
+	常用方法:
+		1.String getServletName():获取当前servlet的名称(web.xml配置的servlet-name)
+		2.String getInitParameter(String key):通过名称获取指定的参数值
+			在根标签下有一个context-param子标签,用来存放初始化参数
+				<context-param>
+					<param-name></param-name>
+					<param-value></param-value>
+				</context-param>
+		3.Enumeration<String> getInitParameterNames()：获取所有的参数名
+		
+域对象:
+	servletcontext
+		可以当成一个map集合
+			常用方法:
+				xxxAttribute()
+		创建和销毁
+			当项目启动的时候,服务器为每一个web项目创建一个serveltcontext
+			当项目被移除的时候或者服务器关闭的时候servletcontext销毁
+		存放:
+			共享的数据
+			
+获取文件的路径:
+	通过类加载器获取文件
+		类.class.getClassLoader().getResource("文件名").getPath()
+		例子:PathServlet.class.getClassLoader().getResource("1.txt").getPath();
+	
+		
+		

@@ -1,0 +1,190 @@
+通过eclipse能发布自己的项目
+技术分析:
+	eclipse:ide
+	tomcat:服务器
+	项目:web项目
+	
+服务器:
+	硬件服务器
+	软件服务器
+web服务器:
+	提供资源供别人访问
+web:
+	网页的意思,资源
+web资源分类:
+	动态的web资源:
+	静态的web资源
+web开发技术:
+	动态的web开发技术:servlet jsp php .net
+	静态的web开发技术:html css
+什么叫javaweb
+	通过java语言编写的网页称之为javaweb
+web通信机制:
+	基于请求响应机制
+	一次请求一次响应,一次响应
+常见的web服务器:
+	服务器名称		厂商			特点
+	weblogic		oracle		大型收费支持javaee所有规范的服务器
+	webspere 		ibm			大型收费支持javaee所有规范的服务器
+	tomcat			apache组织	中小型开源免费支持servlet和jsp规范的服务器
+	
+tomcat 
+	下载:
+		.tar .tar.gz:提供给linux系统使用
+		.zip .exe:提供给windows使用
+	安装:
+		解压运行
+	启动:
+		在tomcat/bin目录下
+		双击startup.bat文件
+		打开浏览器:
+			http://localhost:8080
+	退出:
+		方式1:关闭命令窗口
+		方式2:ctrl+c
+		方式3:双击shutdown.bat
+		
+	常见问题(配置)
+		1.启动的时候一闪而过		正确配置:JAVA_HOME
+		2.端口冲突问题
+			修改tomcat端口号
+				打开tomcat/conf/server.xml
+				70行代码,有如下代码:
+				 	<Connector port="8080" protocol="HTTP/1.1"
+               		connectionTimeout="20000"
+               		redirectPort="8443" />
+               	修改port后面的值就可以了.注意:1024以下的端口号是留给系统用的
+               	80端口是留给htpp协议用的.
+       	3.有可能出现的问题(在环境变量中配置CATALINA_HOME)
+       		删除
+       		
+	tomcat目录结构:
+		bin:存放的是可执行程序
+		conf:配置文件
+		lib:存放的是tomcat运行时需要的jar包
+		logs:日志
+		temp:临时文件目录
+		webapps:存放项目的目录
+		work:存放jsp文件在运行时产生的java和class文件
+		
+	web项目的目录结构:
+		myweb(项目名称)		web 2.5版本标准的目录结构
+		
+			html css js image等目录或者文件
+			
+			web-inf(特点:通过浏览器直接访问不到 目录)
+				
+				lib(项目的第三方jar包)
+				classes(存放的是我们自定义的java文件生成的字节码文件)
+				web.xml(当前项目的核心配置文件)
+				
+	访问路径:
+		http://主机:端口号/项目名称/资源路径
+		
+	常用的项目发布方式:
+		方式1:将项目放到tomcat/webapps下
+		方式2:修改tomcat/conf/server.xml
+			130行,host标签下.添加如下代码
+				<Context path="/项目名称" docBase="项目的磁盘目录" />
+				例如:
+					<Context path="/mysql" docBase="D:\muweb" />
+		方式3:
+			在tomcat/conf/引擎目录/主机目录下,新建一个xml文件
+				文件名称就是项目名,文件的内容如下:
+					<Context  docBase="D:\muweb" />
+					
+	eclipse和tomcat的整合  注意,只需要做一遍
+		参考day08.xls或者 day08.doc文档
+	通过eclipse发布项目
+		1.创建一个项目(动态的web项目)
+		2.选择web项目版本为2.5.(若为3.0版本没有web.xml)
+		3.java文件在src下.
+			网页或者图片放在webcontent
+		4.发布项目
+		
+http:
+	超文本传输协议:
+		规定数据的格式
+	浏览器往服务器发送---请求
+	服务器往浏览器回写---响应
+	
+请求(Request):
+	组成部分:
+		请求行:请求信息第一行
+			格式:请求方式 访问的资源 协议/版本
+			例如:
+				无参数:GET /day0801/1.html HTTP/1.1
+				有参数:GET /day0801/1.html?a=3&b=3 HTTP/1.1
+			请求方式:get和post
+				get会把参数放在url后面,post不会
+				get参数大小有限制,post没有限制
+				get请求没有请求体,post请求有请求体,请求参数放在请求体中
+		 请求头:请求信息的第二行到空行结束
+		 	格式:key/value(value可以是多个值)
+		 	需要掌握的头信息:
+		 	Referer:来自哪个页面,防盗链
+		 	User-agent:Mozilla/4.0 (compatible;MSIE 5.5;WINDOWS NT 6.1) 浏览器信息
+		 	Cookie:cookie
+		 	if-Modified-since:缓存文件的最后修改时间
+		 请求体:空行以下 的内容
+		 	只有post才有请求体
+		 	格式:username=tom&a=3
+		 	
+响应(Response):
+	组成部分:
+		响应行:
+			响应信息的第一行
+			格式:协议/版本 状态码 状态码说明
+			例如:HTTP/1.1 304 Not Modified
+			状态码:
+				200	正常响应成功
+				302	重定向
+				304	读缓存
+				404 用户操作错误.访问资源不存在
+				500	服务器内部异常.代码问题
+		响应头:
+			从响应信息的第二行到空行
+				格式:key/value
+				常见的头:
+					location:http://www.baidu.com	跳转方向,和302一起使用
+					server:apcache tocat	服务器型号
+					content-Encoding:gzip	数据压缩
+					Content-Length:80	数据长度
+					Content-type:text/html;	语言环境
+					Last-Modified:	最后修改时间
+					set-cookie:	cookie信息
+					Refresh:1;url=http://www.it315.org	定时刷新
+					content-Disposition:attachment;filenam=aaa.zip	下载信息
+					Expires:-1	取消缓存
+					cache-control:no-cache	取消缓存
+					pragma:no-cache	取消缓存
+				掌握的头:
+					location:http,Last-Modified,content-Disposition,set-cookie		
+		响应体:
+			页面上展示的内容
+			
+servlet:
+	动态的web开发技术,本质上就是一个类,运行在服务器端的一个java程序
+	处理业务逻辑,生成动态web内容
+编写一个servlet步骤:
+	1.编写一个类
+		a.继承HttpServlet
+		b.重写doGet或者doPost方法
+	2.编写配置文件(web-inf/web.xml)
+		a.注册servlet
+		b.绑定路径
+	3.访问
+		http://主机名称:端口号/项目名/绑定的路径
+接受参数: 	
+	格式:key=value
+	String value=request.getParameter("key")
+回写内容:
+	response
+		response.getWriter().print("success");
+	处理响应时数据中文乱码:
+		resp.setContentType("text/html;charset=utf-8");//建议放在第一行
+		
+
+		
+
+	

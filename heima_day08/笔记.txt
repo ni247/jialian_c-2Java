@@ -1,0 +1,196 @@
+xml:
+	可扩展的标签语言
+	标签自定义
+	作用:存储数据
+	书写规范:
+		1.区分大小写
+		2.应该有一个根标签
+		3.标签必须关闭
+			<xx></xx>
+		4.属性必须用引号
+			<xx att="value" />
+		5.标签体重的空格或者换行或者制表符,都是作为数据内容存在的
+		6.特殊字符必须转义
+			<> &
+		满足上面规范的文件我们称之为是一个格式良好xml文件,可以通过浏览器浏览器
+	后缀名:
+		.xml
+xml组成部分:
+	声明:
+		作用:告诉别人我是一个xml文件
+		格式:
+			<?xml ....  ?>
+		例如:
+			<?xml version='1.0' encoding='utf-8' standalone="yes|no" ?>
+		要求:
+			必须在第一行
+			必须顶格写
+	元素(标签):
+		格式:
+			<xx></xx>
+			<xx/>
+		要求:
+			1.必须关闭
+			2.标签名不能xml,Xml,XML等等开头
+			3.标签名中不能出现" "或者":"等特殊字符
+	属性:
+		格式:
+			<xx 属性名="属性名" />
+		要求:
+			属性必须用引号引起来
+	注释:
+		和html一样
+		<!--注释内容-->
+	CDATA:
+		xml文件的特殊字符必须转义
+		通过cdataky保证数据原样输出
+			格式:
+				<![CDATA[
+				原样输出的功能
+				]]>
+			
+xml解析:
+	解析方式:
+		1.sax:
+			特点:逐行解析,只能查询,不支持增删改
+		2.dom:
+			特点:一次性将文档加载到内存中,形成一个dom树.可以对dom树进行curd操作
+			注意:文件特别大时出问题
+		解析技术:
+			JAXP:sun公司提供支持dom和sax开发包
+			JDom:dom4j兄弟
+			jsoup:一种处理html特定解析开发包
+			dom4j:比较常用的解析开发包,hibernate底层采用
+		dom4j技术进行查询操作
+			使用步骤:
+				1.导入jia包
+				2.创建一个核心对象 SAXReader
+					new SAXReader
+				3.将xml加载到内存中,形成树
+					Document doc=reader.read(文件)
+				4.获取根节点
+					Element roor=doc.getRootElement();
+				5.通过根节点就可以获取其他节点(文本节点,属性节点,元素节点)
+					获取所有的子元素
+						List<Element> list=root.elements();
+					获取元素的指定属性内容
+						String value=root.attributeValue(属性名)
+					获取标签体:
+						遍历list可以获取到每一个子元素.
+						String text= ele.elementText("子标签名称")
+		
+		xpath解析技术
+			依赖于dom4j
+				使用步骤
+					1.导入jar包(dom4jh和jaxen-1.1-beta-6.jar)
+					2.加载xml文件到内存中
+					3.使用api
+						selectNode("表达式")
+						selectSingleNode("表达式")
+				表达式的写法:
+					/ 从根节点开始
+					// 从匹配的选择的当前节点选择文档中的节点,而不考虑他们的位置
+					@ 选取属性
+						如果有一个标签下有一个id属性且有值 id=2
+						//元素名[@属性名='属性值']
+						//元素名[@id='2']
+						
+反射:
+	1.获取对应的class对象.
+		方式1:Class.forName("类全限定名")
+		方式2:类名.class
+		方式3:对象.getClass()
+	2.通过class对象创建一个实例对象(相当于 new 类())
+		通过对象调用newInstance().调用空参构造函数
+		通过获取对象非空参的构造函数,在通过构造函数上.newInstance(参数),获取实例对象
+	3.通过class对象获取一个方法
+		class.getMethod("方法名",class...paramType);
+	4.让方法执行:
+		method.invoke(实例对象,参数...)
+		
+xml约束:
+	作用:规定xml中可以出现哪些元素及哪些属性,以及他们出现的顺序
+	约束的分类:
+		DTD约束:struts hiebernate 
+		SCHEMA约束:tomcat spring等
+
+DTD约束:
+	和xml的关联
+		方式1:内部关联
+			格式:<!DOCTYPE 根元素名 [dtd语法]>
+		方式2:外部关联-系统关联
+			格式:
+				<!DOCTYPE web-app SYSTEM "约束文件的位置">
+			例如:
+				<!DOCTYPE web-app SYSTEM "web-app_2_3.dtd">
+		方式3:外部关联-公共关联
+			格式:
+				<!DOCTYPE web-app SYSTEM PUBLIC "约束文件的名称" "约束文件的位置">
+dtd语法(了解)
+	元素:
+		<!Element 元素名称 数据类型|包含内容>
+			数据类型
+				#PCDATA:普通文本 使用的时候用()引起来
+			包含内容:
+				该元素下可以出现哪些元素,用()引起来
+		符号:
+			*	出现任意次
+			?	出现1次或者0次
+			+	出现至少1次
+			|	或者
+			()	分组
+			,	顺序
+	属性:
+		格式:
+			<!ATTLIST 元素名 属性名 属性类型 属性是否必须出现>
+		属性类型:
+			ID:唯一
+			CDATA:普通文本
+		属性是否必须出现
+			REQUIRED:必须出现
+			IMPLIED:可以不出现
+	注意:一个文档只能使用一个dtd约束
+XML的学习目标:
+	编写一个简单的xml文件
+	可以根据约束文件写出相应的xml文件
+		按f2或者alt+/提示写出内容就可以
+
+SCHEMA约束:
+	一个xml文档中可以添加多个schema约束
+	xml和schema的关联.
+		格式:
+			<根标签 xmlns="...">
+	xmlns-名称空间:
+		关联约束文件
+	例如:
+		一个约束文件中规定 TABLE(表格) 表格由属性 row和col
+		还有一个约束文件
+	在一个xml文件中只能有一个不起别名
+注意:
+	scheam约束本身也是xml文件
+
+xml-解析
+	dom:一次性将整个xml文件加载到内存,可以curd操作
+	sax:逐行解析,只能进行查询操作
+dom4j技术查询xml
+	1.导入jar包
+	2.获取document树
+		Document doc=	new SAXReader().read(文件路径);
+	3.获取根节点
+		Element root=doc.getRootElement();
+	4.通过根节点获取其他节点
+		获取属性节点
+			String value= root.arrtributeValue(属性名)
+		获取所有的子元素
+			List<Element>=root.elements();
+		获取一个元素的子元素标签体
+			String text=ele.elementText("子元素的标签名");
+	Xpath:
+		selectNodes("") 获取多个
+		se;ectSingleNode("") 获取单个
+			
+	
+
+		
+	
+			
