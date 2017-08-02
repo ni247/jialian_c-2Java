@@ -1,0 +1,110 @@
+Hibernate框架的查询方式
+	1.唯一标识OID的检索方式
+		session.get(对象.class,Long oid)
+	2.对象导航的方式
+		对象.getXXX,如果查询到集合,对象等,hibernate框架会自动查询数据库
+	3.HQL的检索方式  
+		Hibernate Query Langugae--Hibernate的查询语言
+			a.支持方法链的编程风格
+			b.可以起别名
+			c.里面不能出现*
+		分页查询:
+			setFirstResult(a)    --从哪条记录开始.limit的第一个参数
+			setMaxResults(b)	 --每页查询的记录条数,limit的第二个参数.pageSize
+		投影查询:只查询几个字段,不是所有的字段
+			a.编写javabean的构造函数.必须提供只查询的那几个字段的构造方法
+			b.编写hql语句 
+				session.createQuery("select new 对象(属性,属性) from 对象");
+		聚合函数:
+			a.修改hql语句
+				select count(*) from 对象 ...
+			b.
+				List<Number> list=query.list();
+				list.get(0).xxxvalue();
+		排序查询:
+			a.编写hql语句 
+				session.createQuery(" from 对象 order by 属性");
+		内连接外连接方式:
+			内连接:
+				a.编写hql语句
+					List<对象> list=session.createQuery("from 对象 inner join fetch 对象.javabean属性(为集合属性)").list();
+				b.利用Set特性,去除重复数据
+					Set<对象> s=new HashSet<>(list);
+					
+	4.QBC的检索方式
+		Query By Criteria--按条件进行查询
+		排序查询:
+			a.
+				cirteria.addOrder(order.desc(属性));
+				cirteria.addOrder(order.asc(属性));
+		分页查询:
+			setFirstResult(a)    --从哪条记录开始.limit的第一个参数
+			setMaxResults(b)	 --每页查询的记录条数,limit的第二个参数.pageSize
+		条件查询:
+			通过使用Restrictions(hibernate框架提供的工具类)类,添加条件
+				Restrictions.eq			--相等
+				Restrictions.gt			--大于
+				Restrictions.ge			--大于等于
+				Restrictions.lt			--小于
+				Restrictions.le			--小于等于
+				Restrictions.between	--在之间
+				Restrictions.like		--模糊查询
+				Restrictions.in			--范围
+				Restrictions.and		--并且
+				Restrictions.or			--或者
+				注意:返回的是criteria接口实现类
+			使用方法:
+				criteria.add(Restrictions.xxx(...));
+			例子:
+				criteria.add(Restrictions.eq("lkm_gender", "男"));
+		聚合函数查询:
+			通过Projections(hibernate框架提供的工具类)类,添加聚合函数
+				使用方法:
+					a.
+						criteria.setprojection(Projections.count(属性));
+					b.	
+						List<Number> list=criteria.list();
+					c.
+						list.get(0).longValue();
+				注意:不固定,可能还有小数等等					
+				特别注意:因为聚合函数只能设置一个.所以,如果想取消聚合函数.则
+					criteria.setProjection(null);
+		离线查询对象:
+			a.创建离线查询对象
+				Criteria c= DetachedCriteria.forClass(要查询的类);
+			b.添加查询条件
+			c.执行查询
+				criteria.getExecutableCriteria(session).list();
+			注意思想:
+				在web层,创建离线查询对象,并且将查询条件添加进去.传递到服务层,只需要传一个criteria对象即可.然后在dao层.通过
+					criteria.getExecutableCirteria(session).list();
+				做各种操作
+多表查询:
+	内连接查询--查询交集的部分.两者有关联的:
+		显示内连接:
+			select * from customers c inner join orders o on c.cid=o.cno;
+		隐式内连接:
+			select * from customers c,orders o where c.cid=o.cno
+	外连接查询--查询表加上交集的部分:
+		左外连接--左边表加上交集的部分:
+			select * from customers c left [outer] join orders o on c.cid=o.cno;
+		右外连接--右边表加上交集的部分:
+			select * from customers c right [outer] join orders o on c.cid=o.cno; 
+set标签上配置策略:
+	fetch的取值			控制sql语句生成的格式
+		select			默认值,发送查询语句
+		join			连接查询,发送的是一条迫切左外连接.配置了join,lazy就失效
+		subselect		字查询,发送一条字查询查询其关联对象.
+	
+	lazy的取值			查找关联对象的时候是否采用延迟
+		true			默认,延迟
+		false			不延迟
+		extra			极其懒惰.可以的话,会直接使用聚合函数查询数据
+many-to-one标签上配置策略:控制sql语句生成的格式
+	fetch的取值:
+		select			默认,发送基本select语句查询
+		join			发送迫切左外连接查询
+	
+	lazy的取值			查找关联对象的时候是否采用延迟
+		false			不采用延迟加载
+		proxy			默认值,代理.现在是否采用延迟,由另一端class上的lazy值决定

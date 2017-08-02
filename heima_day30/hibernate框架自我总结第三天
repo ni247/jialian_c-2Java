@@ -1,0 +1,41 @@
+一对多
+	1.javabean编写
+		一方中:添加set<多对象> name=new hashSet<>();  //注意,必须实例化
+		多方中:添加一对象 name;	//注意,不能实例化
+		并为两方都添加getset方法
+	2.编写domain对象配置文件
+		一方中,有一方一般放弃外检维护,因为多方中没有set标签,也不能设置放弃外检维护.所以,一般一方放弃外检维护:
+			<!-- 配置一方 set标签name属性:表示集合的名称 -->
+			<set inverse="true" name="集合的名称" >
+			<!-- key表示外键的字段 one-to-many表示类全限定名 -->
+			<key column="外检的字段" />
+			<one-to-many class="多方的全限定名" />
+			</set>
+			注意:key表示外检的字段.该字段会生成在多表中.该字段必须和多方中配置相同
+		多方中:
+			<!-- 先配置多方 name 当前javabean中的属性 class 属性的全路径 column -->
+			<many-to-one cascade="all" name="一对象" class="一方的全限定名"
+			column="上述的key"></many-to-one>
+		注意:	inverse:主要用来维护外键(放弃外键),true代表放弃外检维护,只能由一方放弃
+				cascade:表示级联操作程度,主要是用来级联添加,更新删除.保存数据的
+	3.正常代码编写.操作对象add,remove集合即可关联外键
+
+多对多:
+	1.javabean编写
+		两个多方都set<多方对象> 并且实例化
+	2.编写javabean配置文件
+		本方:
+			<!-- 必须放弃一方 -->
+			<set name="自身javabean含的集合属性名称" table="生成的中间表名称" inverse="true">
+				<key column="自身外键属性" />
+				<many-to-many class="其他方类全限定名" column="其他方关联的属性"></many-to-many>
+			</set>
+		其他方:
+			<set name="自身javabean含的集合属性名称" table="生成的中间表名称,必须和上面相同" cascade="save-update">
+			<!-- 当前对象在中间表的外键 的名称 -->	
+			<key column="自身外键属性" />
+			<!-- class 集合中存入对象,对象的全路径 column 集合中对象在中间表的外键的名称 -->
+			<many-to-many class="其他方类全限定名" column="其他方关联的属性"></many-to-many>
+		</set>
+	3.正常代码编写.操作对象add,remove集合即可关联外键
+		

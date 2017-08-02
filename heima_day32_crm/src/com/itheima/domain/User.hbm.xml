@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<!-- 配置类和表结构的映射 -->
+	<class name="com.itheima.domain.User" table="sys_user">
+		<!-- 配置主键,见到name属性,javabean的属性,见到column,是表结构的字段 -->
+		<id name="uid" column="uid">
+			<!-- 主键的生成策略 ,如果name和column一样,则可以省略column,该文件一般放于domain文件夹下 -->
+			<generator class="native"></generator>
+		</id>
+		<property name="username"></property>
+		<property name="password"></property>
+		<property name="name"></property>
+	</class>
+</hibernate-mapping>

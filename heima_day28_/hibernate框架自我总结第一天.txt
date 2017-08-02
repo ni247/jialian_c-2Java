@@ -1,0 +1,94 @@
+三层架构					框架
+	web层	servlet		struct2
+	服务层	service		spring
+	持久层 	dao			hibernate
+Hibernate
+	理念:操作对象就直接操作数据库
+	优点:简化开发,并且提供了缓存功能
+		1.hibernate对jdbc访问数据库进行了封装,简化了数据访问层繁琐的代码
+		2.hibernate是一个基于jdbc的持久化框架
+		3.hibernate性能比较好,并且映射关系很灵活多样.1对多,多对多都没有问题
+框架类似一个插件
+
+课程中使用crm客户关系管理系统来说明hibernate框架
+
+hibernate开发总结:
+	1.导入jar包:require文件夹及日志的jar包3个
+	2.编写javabean.全都使用包装类.集合使用set集合,并new.对象不new.
+	3.在domain文件夹下编写javabean的映射文件. 对象.hbm.xml
+		a.导入约束代码
+			<!DOCTYPE hibernate-configuration PUBLIC
+			"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+			"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+		b.<hibernate-mapping>
+			<!-- 配置类和表结构的映射 -->
+			<class name="javabean全限定名" table="生成的表名称">
+			<!-- 配置主键,见到name属性,javabean的属性,见到column,是表结构的字段 -->
+			<id name="属性名" column="表中的列名">
+			<!-- 主键的生成策略 ,如果name和column一样,则可以省略column,该文件一般放于domain文件夹下 -->
+			<generator class="native"></generator>
+			</id>
+			<property name="属性名" column="表中的列名"></property>
+				</class>
+			</hibernate-mapping>
+	4.在src目录下编写hibernate.cfg.xml文件.
+		a.导入约束代码
+			<!DOCTYPE hibernate-configuration PUBLIC
+			"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+			"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+		b.<hibernate-configuration>
+			<!-- 先配置sessionFactory标签,一个数据库对应一个SessionFactory标签 -->
+			<session-factory>
+			<!-- 必须配置的参数有5个,4大参数,数据库的方言 -->
+			<property name="hibernate.connection.driver">com.mysql.jdbc.Driver</property>
+			<property name="hibernate.connection.url">jdbc:mysql:///hibernate_day01</property>
+			<property name="hibernate.connection.username">root</property>
+			<property name="hibernate.connection.password">1234</property>
+			<!-- 数据库的方言 -->
+			<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+			<!-- 可选配置 -->
+			<!-- 可以显示sql语句在控制台 -->
+			<property name="hibernate.show_sql">true</property>
+			<property name="hibernate.format_sql">true</property>
+			<!-- 慎用,测试用 ,create,create-drop ,update用的很多 -->
+			<property name="hibernate.hbm2ddl.auto">update</property>
+			<!-- 映射配置文件 ,引入配置文件 -->
+			<mapping resource="com/itheima/domain/Customer.hbm.xml" />
+			</session-factory>
+		</hibernate-configuration>
+	5.编写代码
+		a.加载全局配置文件
+			Configuration config=new Configuration().configure();
+		b.创建session工厂
+			SessionFactory factory=config.buildSessionFactory()
+		c.获取一个session(连接)
+			Session session= factory.openSession();
+			Session session= factory.getCurrentSession();--不需要关闭,需要配置全局配置文件
+		d.获取一个事务
+			Transaction tr=sesssion.beginTransaction();
+		e.编写中间代码,依靠session方法操作.查询使用Criteria,更新修改使用save update
+			Criteria使用方法
+				一:创建criteria对象,中间参数c为需要查询的对象的class
+					Criteria criteria=session.createCriteria(Class c);
+				二:添加查询条件,使用Restriction类帮助 like模糊查询 eq =查询
+					criteria.add(Restrictions.like(propertyName,value));
+				三:查询列表
+					criteria.list();
+			Query使用方法(不推荐)
+				一:创建Query对象
+					Query query=session.createQuery("from 对象名");
+					如果有参数:
+						方式1:
+							Query query=session.createQuery("from 实体名  where 属性 =?")
+							query.setXXX(0,值). 注意,从0开始
+						方式2:
+							Query query=session.createQuery("from 实体名  where 属性 = :aaa")
+							query.setXXX("aaa",值). 注意,set中不加冒号
+				二:查询
+					query.list();
+		f.tr.commmit() or tr.rollback();
+		g.关闭session,关闭工厂
+备注:因为耦合性的原因,尽力降低耦合性,以后尽量在服务层获取session(getCurrentSession()),try,catch然后rollback,在dao层只需要做save,update操作即可
+
+	
+	

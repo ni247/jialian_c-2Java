@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<!-- 编写常量,需要了解常量大概意思,及加载顺序 -->
+	<!-- 后缀名 -->
+	<constant name="struts.action.extension" value="do,,"></constant>
+	<!-- 开启动态方法访问 -->
+	<constant name="struts.enable.DynamicMethodInvocation" value="true"></constant>
+	<package name="default" namespace="/" extends="struts-default">
+		<!-- 配置action -->
+		<action name="hello" class="com.itheima.action.HelloAction"
+			method="sayHello">
+			<!--配置跳转的页面,路径的写法:在structs2框架中,不管是转发还是重定向,都不用写项目名 -->
+			<result name="ok">/demo1/suc.jsp</result>
+		</action>
+		<!-- pojo类的方式 -->
+		<action name="Demo1Action" class="com.itheima.action1.Demo1Action"></action>
+		<!-- 实现action接口方式 -->
+		<action name="Demo2Action" class="com.itheima.action1.Demo2Action">
+			<result name="success">/demo1/suc.jsp</result>
+		</action>
+		<!-- 继承actionsupport方式 -->
+		<action name="Demo3Action" class="com.itheima.action1.Demo3Action">
+			<result name="success">/demo1/suc.jsp</result>
+		</action>
+	</package>
+	<!-- 分包管理,引入其他的配置文件 -->
+	<!-- <include file="com/itheima/user/struts_user.xml"></include> -->
+	<!-- 演示action访问 -->
+	<package name="demo2" namespace="/" extends="struts-default">
+		<!-- ,传统方法 -->
+		<action name="saveCust" class="com.itheima.action2.CustomerAction"
+			method="save"></action>
+		<action name="deleteCust" class="com.itheima.action2.CustomerAction"
+			method="delete"></action>
+		<!-- 通配符的方式 -->
+		<action name="linkman_*" class="com.itheima.action2.LinkmanAction"
+			method="{1}">
+			<!-- 跳转界面可以写多个 -->
+			<result name="saveOk">saveOk</result>
+		</action>
+		<!-- 配置动态方法访问 -->
+		<action name="user" class="com.itheima.action2.UserAction"></action>
+	</package>
+
+</struts>

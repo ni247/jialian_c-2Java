@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+	<bean id="CustromerService" class="com.itheima.service.Impl.CustromerServiceImpl" />
+	<bean id="CustomerDao" class="com.itheima.dao.Impl.CustomerDaoImpl" />
+</beans>

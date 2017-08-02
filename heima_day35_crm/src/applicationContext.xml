@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<!-- 配置业务层 -->
+	<bean id="customerService" class="com.itheima.service.CustomerServiceImpl">
+		<property name="customerDao" ref="customerDao"></property>
+	</bean>
+
+	<!-- 配置持久层 -->
+	<bean id="customerDao" class="com.itheima.dao.CustomerDaoImpl">
+	</bean>
+</beans>

@@ -1,0 +1,23 @@
+package com.csii.pccc.service;
+
+/**
+ * 外接电商签名延签示例代码
+ * 浙江省农信商户接入
+ * @author fansonggu@csii.com.cn
+ *
+ */
+public class MockMerchantTest {
+
+	public static void main(String[] args) {
+		//待签名数据为 xml 格式报文，报文格式如下所示：
+		String plain = "<Finance><Message><TransName>WHDW</TransName><TransChannelId>04</TransChannelId><TransId>WHDW</TransId><MerchantId>010020150521152412</MerchantId><SubMerchantId>201506230000006545</SubMerchantId><UserNo></UserNo><MerSeqNo>AA20151014103100</MerSeqNo><MerDateTime>20151012090000</MerDateTime><OrderId>AA0420151014103100</OrderId><TransAmt>2.00</TransAmt><Currency>01</Currency><MerURL>http://www.merurl001.com</MerURL><MerURL1>http://www.merurl1001.com</MerURL1><MsgExt>0420151012085901测试1001</MsgExt></Message></Finance>";
+		System.out.println("组装后的明文数据："+plain);  // 组装请求报文时，将此字符串放置在 Plain 域上
+		
+		String signData = MerchantService.getSignature(plain); // 发送浙江农信前，对报文签名
+		System.out.println("签名后的数据："+signData); // 组装请求报文时，将此字符串放置在 Signature 域上
+		
+		boolean verifyflag = MerchantService.verifySignature(plain, signData); // 浙江农信返回报文后，需对浙江农信返回的报文进行验证签名操作，只有验证签名结果为true的交易才是正常交易，否则应该报签名异常的错误
+		System.out.println("验签结果："+verifyflag);
+	}
+
+}

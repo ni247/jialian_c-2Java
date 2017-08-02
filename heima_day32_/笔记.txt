@@ -1,0 +1,4 @@
+Action类三种写法:
+	action类就是一个pojo类
+		简单的Java类,只继承自object,没有实现接口
+		

@@ -1,0 +1,172 @@
+回顾:
+注解:
+	格式:
+		@interface 注解名{}
+	jdk中的三个注解
+	自定义注解:
+		注解属性:
+			接口中的方法
+			类型:
+				基本类型
+				String 
+				Class
+				Annotation
+				Enum
+				以上类型的一维数组
+			若一个注解有属性,使用时必须有值.除非default了
+		元注解:
+			@Retention	保留到哪个阶段
+				source
+				class
+				runtime
+			@Target		作用在哪个部分上
+				type	类,接口
+				method	方法
+				filed	字段上
+	注解离不开反射
+
+文件上传:
+	servlet3.0特性:
+		没有web.xml
+		内嵌了文件上传功能
+		支持注解开发
+		
+		注解开发:
+			@WebServlet(urlpatterns{"/demo1"})
+			@WebListener
+			@WebFilter(urlpatterns{"/demo1"}
+	
+	servlet3.0文件上传要求
+		浏览器要求:
+			1.提交方式必须是post
+			2.提供文件上传组件 type=file
+			3.表单属性enctype属性的值, mutipart/form-data
+		servlet3.0服务器要求
+			在servlet3.0上添加注解 	@MultipartConfig
+			普通上传组件
+				request.getParameter()
+			文件上传组件
+				Part part=reqquest.getPart(name值)
+				获取文件名称
+					part.getHeader("content-disposition")
+						截图字符串
+				获取文件的流
+					part.getInputStream()
+				对拷流
+				删除临时文件
+					part.delete()
+		文件上传问题:
+			文件重名:随机名称
+			文件安全:
+			文件目录(通过以下方式分类):
+				用户
+				时间
+				数量
+				随机
+					
+动态代理:
+	jdk中的Proxy
+		前提:要求代理对象和被代理对象要实现接口
+		
+		Object Proxy.newProxyInstance(ClassLoader loader,Class[] interfaces,InvocationHandler h)
+			loader:类加载器,一般使用被代理对象的loader.
+				被代理对象.getClass().getClassLoader()
+			interfaces:被代理对象所实现的所有接口.
+				被代理对象.getClass().getInterfaces()
+			h:接口,执行处理类
+				new	InvocationHandler() 匿名实现这个接口的对象.实现里面的方法即可
+					Object invoke(Object proxy,Method method,Object[] args)
+						proxy:代理对象,不要使用.容易重复调用
+						method:当前执行的方法
+						args:当前方法所需要的参数
+						
+商城的实体:
+	用户
+	订单
+	商品
+	分类
+	订单项
+	
+Servlet中,user实体,只定义一个serlvet.方法名称也通过参数传递
+也就是说
+String method=request.getParameter("method");
+if("add".equals(method))
+处理
+else if(...)
+处理
+			
+问题1:
+	封装数据的时候报了一个错误,因为字符串转时间类型出现错误.
+		beanUtils不支持字符串转换成时间
+解决方案:
+	自定义转换器
+		1.编写一个类,实现conventer接口
+		2.实现方法
+			convert(转换成的类型,待转换的字符串)
+		3.在封装数据之前,注册转换器
+			ConvertUtils.regist(...)
+			
+扩展:
+	使用算法加密密码
+	md5加密	不对称的加密,不可逆
+	在数据库中可以使用md5加密
+		格式:md5(字段|值)
+	java中的api
+	
+电子邮箱:
+	就是在邮件服务器上开启的一块空间
+	服务器:提供邮件服务
+	协议:规定数据的格式
+
+	发送邮件的协议:smtp
+	接受邮件的协议:pop/pop3 imap 
+	
+本地的服务器:
+		邮件服务器:
+			设置域名		store.com
+		新增几个账户(普通用户)
+			jack
+			tom
+		新增一个管理员用户
+			service
+
+可以使用缓存技术,不经常改动的数据.可以放在服务器内存中.减少数据库交互
+	常见的缓存技术
+		ehcache:今天使用,hibernate框架中使用.底层使用
+		memcache
+		redis:效率最高
+	ehcache使用步骤:
+		1.导入jar包
+		2.编写配置文件
+		3.使用api
+			获取数据先从缓存中获取
+				若获取的值为空,再去查询数据库.将数据放入缓存中
+				
+数据库备份:
+	图形化工具备份:
+	mysql命令备份:不用登录数据库
+		mysqldump -uroot -p1234 store28>d:\1.sql
+	mysql数据库通过命令还原:
+		必须手动创建数据库
+		mysql -uroot -p1234 数据库名<d:\1.sql
+		
+扩展:
+	权限控制(粗粒度)-通过filter做.
+过滤器编写步骤:
+	1.编写一个类
+		实现filter接口,重写方法
+	2.编写配置文件
+		web.xml
+		<filter>
+		<filter-mapping>
+	实现了一个权限控制.没有登录的人会弹出去
+
+扩展:	
+	弹出层
+	
+	
+	
+
+
+			
+		

@@ -1,0 +1,105 @@
+struts2是一个web端,采用mvc设计模式的框架.
+struts2框架前端的控制器就是过滤器
+
+struts2框架使用步骤:
+	1.下载struts2开发包
+	2.解压struts-xxx-all.zip包
+	3.引入开发jar包
+		all文件夹下:	apps	--提供一些应用
+					libs	--开发的jar包(太多)
+					docs	--开发文档
+					src		--框架源码
+		在all文件夹中apps文件夹中,有开发例子.将struts2_blank.war解压(zip).获取里面lib下的包,复制到项目lib中
+	4.配置web.xml文件
+		struts2的前端控制器就是一个过滤器.需要在web.xml进行配置
+			<filter>
+				<filter-name>struct2</filter-name>
+				<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+			</filter>
+			<filter-mapping>
+				<filter-name>struct2</filter-name>
+				<url-pattern>/*</url-pattern>
+			</filter-mapping>
+	5.编写action类
+		public String 方法名(){
+		}
+	6.在src目录下配置struts文件
+		配置文件必须是struts.xml
+			 <?xml version="1.0" encoding="UTF-8" ?>
+    			<!DOCTYPE struts PUBLIC
+      		  "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    		    "http://struts.apache.org/dtds/struts-2.3.dtd">
+    			<struts>
+        			<package name="包名称,不能重复" namespace="执行的命名空间,一般为/" extends="继承的参数,一般是struts-default">
+            			<action name="访问路径" class="执行的类全限定名" method="方法名称,不写默认excute">
+            				<result name="结果页面逻辑视图名称" type="结果类型,默认值转发">跳转的网址</result>
+            			</action>
+        			</package>
+    			</struts>
+
+struts2框架加载配置文件顺序:
+	default.properties
+	strtus-default.xml,struts-plugin.xml,struts.xml
+	自定义的struts.properties
+	自定义配置提供者
+	web.xml
+	所以,写在后面的参数可以覆盖掉前面的参数 		
+
+配置文件的说明:
+	default.properties 			--struts2常量的值
+	struts-default.xml			--struts2核心功能的配置(bean,拦截器,结果类型)
+	struts.xml					--工作中的映射配置(可以配置常量)
+										在struts标签下添加constant标签
+									struts格式:
+										struts
+											[constant]
+											package
+												action
+													result
+	web.xml						--配置前端控制器(可以配置常量)
+										在filter标签下
+											<init-param>
+												<param-name></param-name>
+												<param-value></param-value>
+											</init-param>
+											
+需要了解的常量:
+	struts.il8n.encoding=UTF-8; 			指定默认编码及,get使用new String 转换
+	struts.action.extension=action,,		指定需要struts2请求的请求后缀.
+	struts.serve.static.browserCache=true	设置浏览器是否缓存静态内容
+	struts.configuration.xml.reload=false	设置是否修改后自动加载struts配置文件.
+	struts.devMode=false					开发模式使用,打印更加详细的错误信息
+	
+可以使用在struts.xml文件中引入其他配置文件
+	<include file="cn/itcast/demo2/struts-part1.xml"/>
+	
+Action类的三种写法:
+	1.Pojo类:
+		没继承,没实现的类
+	2.实现action接口
+		实现execute方法
+	3.继承action的实现类actionsupport类(开发中使用最多)
+		直接在里面写方法
+Action访问配置:
+	1.传统配置(繁琐,但是清晰)
+		 <action name="addBook" class="cn.itcast.demo2.BookAction" method="add"></action>
+	2.通配符(*+{1})
+		<action name="user_*" class="cn.itcast.demo2.BookAction" method="{1}"></action>
+			*就对应着{1}的数值,也就是访问xxx/user_add,就是访问该class类中add方法
+	3.动态方法访问(!连接)
+		a.在struts.xml中开启该常量
+			<constant name="struts.enable.DynamicMethodInvocation" value="true"></constant>
+		b.配置struts.xml文件
+			<action name="product" class="cn.itcast.demo2.ProductAction"></action>
+		访问xxx/product!add,就是调用该类中的add方法
+		
+Action类中的方法的签名是有要求.必须这么做
+	 * public String
+	 * 方法名称是任意,但是不能有参数列表
+	 * 返回值是完成页面的跳转:
+	 
+切记切记,事务在服务层中开启.可以在web层传递一个离线查询对象给服务层.
+
+
+		
+	

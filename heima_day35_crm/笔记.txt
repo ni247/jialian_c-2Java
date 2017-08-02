@@ -1,0 +1,47 @@
+spring框架:一站式的框架,每一层都能提供解决的方案
+spring核心:
+	IOC:控制反转
+	APO:面向切面编程
+特点:
+	1.解耦合
+	2.管理事务
+IOC的入门:
+	IOC:控制反转,把对象的创建的权利反转给Spring框架
+		开发教程:
+			1.下载spring开发的jar包
+			2.导入开发jar包;
+				bin
+				core
+				express
+				context
+				logging
+				loggforj(需要导入配置文件使用)
+		编写service接口和实现类,编写配置文件
+			在src目录下,名称(applicationContext.xml) bean属性
+		编写代码,获取工厂类,获取bean对象,调用方法
+		老工厂factory和新工厂factory的区别在于加载方式,新工厂在加载[配置文件就加载了
+配置文件
+	bean标签
+		id
+		name
+		class
+		scope
+		init-method
+		destory-method		
+依赖注入:
+	DI:
+		依赖注入
+			在bean标签中使用property标签
+		构造方式: constructor-arg
+		属性set方式:提供属性,然后提供set方法
+		p名称空间方式
+		spel表达式方式
+		注入集合
+整合web:先导入spring-webjar包
+		在webconfig中编写配置文件
+		修过web工厂
+			WebApplicationContext ac = WebApplicationContextUtils
+				.getWebApplicationContext(ServletActionContext.getServletContext());
+	
+		
+		

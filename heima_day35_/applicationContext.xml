@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 使用bean标签,id唯一.id值不能出现特殊符号.可以使用name替代.name可以出现特殊符号 scope:prototype 多例 
+		action配成多例 scope:singleton 单例, 默认值.在spring框架整合struts2框架的时候,需要配置成多例 globalsession 
+		集群,单点登录使用,应用在web项目中,多服务器间的session 属性:init-method destory-method -->
+	<bean init-method="init" destroy-method="destory" id="userService"
+		class="com.itheima.demo2.UserServiceImpl"></bean>
+	<!-- 演示依赖注入 -->
+	<bean id="customerDao" class="com.itheima.demo3.CustomerDaoImpl" />
+	<bean id="customerService" class="com.itheima.demo3.CustomerServiceImpl">
+		<property name="customerDao" ref="customerDao"></property>
+	</bean>
+	<bean id="car1" class="com.itheima.demo4.Car1">
+		<!-- 里面的属性.index为目标参数的位置 -->
+		<constructor-arg name="cname" value="奇瑞qq"></constructor-arg>
+		<constructor-arg name="price" value="5000"></constructor-arg>
+	</bean>
+	<!-- 构造器注入,演示引入对象数据 -->
+	<bean id="person" class="com.itheima.demo4.Person">
+		<constructor-arg name="pname" value="美美"></constructor-arg>
+		<constructor-arg name="car1" ref="car1"></constructor-arg>
+	</bean>
+	<!-- 属性注入,而不是构造器注入 -->
+	<bean id="car2" class="com.itheima.demo4.Car2">
+		<property name="cname" value="#{'大奔'}"></property>
+		<property name="price" value="2220000"></property>
+	</bean>
+	<!-- 使用spel方式注入 set集合使用set标签 -->
+	<bean id="user" class="com.itheima.demo4.User">
+		<property name="car2">
+			<ref bean="car2" />
+		</property>
+		<property name="atts">
+			<list>
+				<value>哈哈</value>
+				<value>嘿嘿</value>
+				<value>呵呵</value>
+			</list>
+		</property>
+		<property name="map">
+			<map>
+				<entry key="1" value="2"></entry>
+			</map>
+		</property>
+		<property name="pro">
+			<props>
+				<prop key="username">root</prop>
+				<prop key="password">1234</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- #{} spel语法.主要强大之处大于可以使用方法 -->
+</beans>

@@ -1,0 +1,57 @@
+三层架构
+
+web层			服务层 			持久层
+struct2			spring			hibernate
+								操作数据库
+								
+三大框架
+
+CRM(Customer Relataionship Management) 客户关系管理
+是利用相应的信息技术以及互联网技术来协调企业和顾客间在销售,营销和服务上的交互,向客户提供创新式的个性的客户交互和服务的过程
+
+Hibernate框架(开放源代码的对象关系映射框架)
+	好处:简化了开发,提供了新的功能(缓存功能)
+	优点:
+		1.Hibernate对jdbc访问数据库的代码做了封装,大大简化了数据访问层繁琐的重复性代码
+		2.Hibernate是一个基于jdbc的主流持久化框架,是一个优秀的orm实现,他很大程度的简化了dao层编码工作
+		3.Hibernate的性能非常好,因为是一个轻量级框架,映射的灵活性很出色.支持很多关系型数据库,从一对一,到多对多的各种负责关系
+什么事框架:框架是软件的半成品,帮助咱们完成了部分的功能
+
+orm(对象关系映射)☆:
+	Object Relational Mapping
+	O:面向对象领域的Object(JavaBean对象)
+	R:关系数据库领域的Relational(表的结构)
+	M:映射的Mapping(xml配置文件)
+	Hibernate使程序员通过操作对象的方式来操作数据库记录
+	
+轻量级框架:
+	hibernate
+重量级框架:
+	EJB:sun公司提供的编写javaee的整体框架
+		东西比较多,功能多.jar包很大
+		
+快速入门
+1.编写数据库和表结构
+2.创建web项目
+3.导入开发的jar包
+	mysql驱动包,Hibernate必要的包(require),日志的jar包(3个)
+4.编写javabean,以后不使用基本数据类型,使用包装类
+5.编写映射的配置文件(核心),先导入开发的约束.
+6.编写hibernate核心的配置文件,里面的内容是固定的
+7.编写代码
+	a.new 一个Configuration
+	b.Configuration对象调用buildSession的buildSessionFactory()方法,获取session工厂
+	c.调用session工厂的openssion方法,获得session对象.
+	d.session对象.beginTransaction()获取transaction对象
+	e.调用session.save(Object o)保存数据
+	f.事务对象提交
+	g.关闭session,关闭工厂
+
+	
+为什么比较少的使用properties属性文件
+	 属性文件当中是不能引入映射文件的
+
+	
+
+
+	

@@ -1,0 +1,38 @@
+hibernate主键的生成策略:
+	natice:本地策略,自动根据底层数据库,选择策略
+		底层是mysql:identity
+		底层是oracle:sequence
+	sequence:适用于short,int,long作为主键,底层使用的是序列的增长方式
+	indentity:适用于short,int,long作为主键,但是必须使用在有自动增长数据库中.才能使用
+	uuid:使用字符串作为主键,自动会生成随机字符串生成主键
+	assigned:不需要hibernate管理,需要手动配置
+hibernate框架,持久化类的概念:
+	javabean+javabean配置文件 名称.hbm.xml
+hibernate的一级缓存:
+	默认开启,效果拔群.
+	缓存的声明周期为session中.
+	证明方式:
+		在同一个session中查询两次,第二次不会查询数据库
+事务:
+	定义:
+		事务就是逻辑上的一组操作,组成事务的各个组成单元.要么全部成功,要么全部失败
+	事务的特性ACID:
+		原子性(A):事务不可以分割,事务中的操作要么全部发生,要么全部不发生
+		一致性(C):事务执行前后数据会保持一致,转账金额.两个账号的金额在转账前后还是相同
+		隔离性(I):多个用户并发访问数据库时,数据库为每一个用户开启事务,不能被其他事务操作数据干扰,多个事务要湘湖隔离
+		持久性(D):事务一旦提交,数据就永久性保存在数据库中.		
+	不考虑事务的隔离性,会产生:
+		脏读:另一个事务读到事务未提交的数据
+		不可重复读:在一个事务内读取表中的某一行数据,多次读取的结果不同
+		幻读(虚读):一个事务读到了另一个事务提交的insert数据,多次查询结果不一致
+设置事务的隔离级别可以解决数据库的写问题
+设置乐观锁,悲观锁,可以解决数据库的读问题
+	乐观锁:
+		1.在javabean中添加version属性,并添加getset方法
+		2.在javabean配置xml文件中,添加version
+			<version name="version">
+		3.开启绑定本地的session,在全局配置文件中添加
+			<property name="hibernate.current_session_context_class">thread</property>
+		4.获取session方式从openssion方法改为
+			FACTORY.getCurrentSession()
+			这样就是从threadlocal中获取session对象

@@ -1,0 +1,8 @@
+属性驱动的方式
+	方式1:
+		action类中提供属性,并且提供set方法.
+	方式2:
+		额外提供一个javabean类,提供get,set方法.action类中提供一个javabean对象.
+		get,set方法.
+		需要注意,页面编写中,name必须为action中类的javabean对象实例.名称
+			例如:user.age

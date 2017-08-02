@@ -1,0 +1,13 @@
+ongl表达式, 从root栈获取值,默认情况下不写#号
+			从context栈获取值,默认需要加#号
+			
+默认我们操作的就是root栈.context栈是struts框架往里面放入map集合.
+
+
+压栈,默认的规范,压入集合用set
+压入对象 push
+
+
+#符号的用法:
+	从contextMap中获取数据
+	

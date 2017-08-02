@@ -1,0 +1,80 @@
+主键的生成策略:
+	sequence:适用于short,int,long作为主键,底层使用的是序列的增长方式
+	indentity:适用于short,int,long作为主键,但是必须使用在有自动增长数据库中.才能使用
+	native:本地策略,根据底层的数据库不同,自动选择适用于该种数据库的生成策略
+		如果底层是mysql,相当于identity
+		如果底层是oracle.相当于sequence
+	uuid:适用于char,varchar类型作为主键
+		自动生成随机字符串作为主键
+	assigned:主键的生成不用hibernate管理,必须手动设置主键
+	
+hibernate的持久化类:
+	持久化类=javabean类+htbm配置文件
+hibernate的持久化类的状态:
+	瞬时态:
+		没有持久化标识oid,没有被纳入到session对象的管理
+	持久态:
+		有持久化标识oid,已经被纳入到session对象的管理
+		有自动更新数据库的能力
+	托管态:
+		有持久化标识oid,没有被纳入到session对象的管理
+三个状态对象之间的转换:
+	获取瞬时态:
+		使用new 一个.
+	瞬时转持久:
+		使用save或者saveOrUpdate()方法
+	瞬时转托管(不推荐):
+		设置id
+	获取持久态:
+		get(),load,find,iterate(),tec
+	持久转瞬时:
+		delete()
+	持久转托管:
+		close(),clear(),evict()
+	托管转持久:
+		update()
+session对象的一级缓存:
+	缓存定义:
+		其实就是一块内存空间,将数据源中的数据存放到缓存中,再次获取的时候,直接从缓存中获取,可以提高程序的性能
+	两种缓存:
+		一级缓存session:自带的不能卸载.一级缓存的生命周期于session一直.
+		二级缓存:默认没有开启,需要手动配置才可以使用
+	证明一级缓存的存在
+		再同一个session对象中两次查询,可以证明使用了缓存
+
+学习session接口中与一级缓存相关的方法
+	session.clear() 清空
+	session.evict(object i) 清除指定的实体对象
+	session.flush() 刷出
+	
+事务:
+	定义:
+		事务就是逻辑上的一组操作,组成事务的各个执行单元,操作要么全部成功,要么全都失败
+	事务的特性:
+		原子性:事务不可以分割 
+		一致性:事务执行的前后数据的完整性保持一致
+		隔离性:一个事务执行的过程中,不应该受到其他事务的干扰
+		持久性:事务一旦提交,数据就永久性保持到数据库中
+	不考虑隔离性
+		脏读:		一个事务读到了另一个事务未提交的数据
+		不可重复读:	一个事务读到了另一个事务已经提交的update数据,导致多次查询结果不一致
+		虚读:		一个事务读到了另一个事务已经提交的insert数据,导致多次查询结果不一致
+悲观锁:
+乐观锁:
+	在javabean中添加version属性.并添加getset方法
+	在该hbm配置文件中添加version标签.<version name="version">
+	
+	1.开启绑定本地的session,在全部配置文件中添加
+		<property name="hibernate.current_session_context_class">thread</property>
+	2.获取session方式从openssion方法改为
+		FACTORY.getCurrentSession()
+		这样就是从threadlocal中获取session对象
+		
+使用query接口查询where  hql语句
+	方式1:
+		Query query=session.createQuery("from 实体名  where 属性 =?")
+		query.setXXX(0,值). 注意,从0开始
+	方式2:
+		Query query=session.createQuery("from 实体名  where 属性 = :aaa")
+		query.setXXX("aaa",值). 注意,set中不加冒号
+	警告:模糊查询 from 实体名 where 属性 like ? 或者 :aaa,将%写在setXXX中

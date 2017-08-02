@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<!-- 编写常量,需要了解常量大概意思,及加载顺序-->
+	<constant name="struts.action.extension" value="do,,"></constant>
+	<package name="default" namespace="/" extends="struts-default">
+		<!-- 配置action -->
+		<action name="hello" class="com.itheima.action.HelloAction"
+			method="sayHello">
+			<!--配置跳转的页面,路径的写法:在structs2框架中,不管是转发还是重定向,都不用写项目名 -->
+			<result name="ok">/demo1/suc.jsp</result>
+
+		</action>
+	</package>
+</struts>
