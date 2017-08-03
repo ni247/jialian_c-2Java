@@ -10,7 +10,7 @@ public class Demo1 {
 	 */
 	@Test
 	public void run1() {
-		IUserService us = new UserService();
+		IUserService us = new UserServiceImp();
 		us.sayHello();
 	}
 
