@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+	<!-- 配置用户的dao -->
+	<bean id="customerDao" class="com.itheima.demo3.CustomerDaoImpl"></bean>
+	<!-- 编写切面类配置 -->
+	<bean id="myAspectXml" class="com.itheima.demo3.MyAspectXml"></bean>
+
+	<!-- 配置aop -->
+	<aop:config>
+		<!-- 配置切面类:切入点+通知 -->
+		<aop:aspect ref="myAspectXml">
+		<!--  通知类型
+		after:最终通知,不管结果都通知
+		after-returning:后置通知
+			
+			 -->
+			<aop:around  method="around"
+				pointcut="execution(* *..*.*DaoImpl.save*(..))" />
+		</aop:aspect>
+	</aop:config>
+
+</beans>
+
+
+
