@@ -126,11 +126,10 @@
 											style="LINE-HEIGHT: 20px; HEIGHT: 20px; TEXT-ALIGN: right">
 											共[<B>${total}</B>]条记录,[<B>${totalPage}</B>]页 ,每页显示 <select
 												name="pageSize">
-
-												<option value="15"
-													<c:if test="${pageSize==1 }">selected</c:if>>1</option>
-												<option value="30"
-													<c:if test="${pageSize==30 }">selected</c:if>>30</option>
+												<option value="15">
+													<c:if test="${pageSize==1 }">selected</c:if>1</option>
+												<option value="30">
+													<c:if test="${pageSize==30 }">selected</c:if>30</option>
 											</select> 条 [<A href="javascript:to_page(${page-1})">前一页</A>] <B>${page}</B>
 											[<A href="javascript:to_page(${page+1})">后一页</A>] 到 <input
 												type="text" size="3" id="page" name="page" /> 页 <input
